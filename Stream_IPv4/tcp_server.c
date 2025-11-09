@@ -6,7 +6,7 @@
 #include <netinet/in.h>
 
 #define PORT 6789
-#define BUFFER_SIZE 1024
+#define BUFFER_SIZE 65536
 
 int main() {
     int server_fd, client_fd;
@@ -24,9 +24,9 @@ int main() {
     // Set up server address
     memset(&server_addr, 0, sizeof(server_addr));
     server_addr.sin_family = AF_INET; //IPv4
-    // server_addr.sin_addr.s_addr = INADDR_ANY; // Listen on all interfaces
+    server_addr.sin_addr.s_addr = INADDR_ANY; // Listen on all interfaces
     // inet_pton(AF_INET, "x.x.x.x", &server_addr.sin_addr); //Listen on the LAN network
-    inet_pton(AF_INET, "127.0.0.1", &server_addr.sin_addr); //Listen on the same host
+    // inet_pton(AF_INET, "127.0.0.1", &server_addr.sin_addr); //Listen on the same host
     server_addr.sin_port = htons(PORT); // Should use htons
 
     // Bind
@@ -57,16 +57,16 @@ int main() {
     // Print client info
     char client_ip[INET_ADDRSTRLEN];
     inet_ntop(AF_INET, &client_addr.sin_addr, client_ip, sizeof(client_ip));
-    printf("Client connected: IP = %s, Port = %d\n", client_ip, ntohs(client_addr.sin_port));
+    //printf("Client connected: IP = %s, Port = %d\n", client_ip, ntohs(client_addr.sin_port));
 
     // Echo loop
     ssize_t bytes_read;
     while ((bytes_read = read(client_fd, buffer, BUFFER_SIZE - 1)) > 0) {
         buffer[bytes_read] = '\0';
-        printf("Received from client: %s\n", buffer);
+        //printf("Received from client: %s\n", buffer);
 
         char response[BUFFER_SIZE];
-        snprintf(response, BUFFER_SIZE, "Server receive: %s", buffer);
+        //snprintf(response, BUFFER_SIZE, "Server receive: %s", buffer);
         write(client_fd, response, strlen(response));
     }
 

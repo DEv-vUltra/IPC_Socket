@@ -5,7 +5,7 @@
 #include <arpa/inet.h>
 
 #define PORT 6789
-#define BUFFER_SIZE 1024
+#define BUFFER_SIZE 65536
 
 int main() {
     int sockfd;
@@ -23,8 +23,9 @@ int main() {
     // Set up server address
     memset(&server_addr, 0, sizeof(server_addr));
     server_addr.sin_family = AF_INET;
+    server_addr.sin_addr.s_addr = INADDR_ANY;
     server_addr.sin_port = htons(PORT);
-    inet_pton(AF_INET, "127.0.0.1", &server_addr.sin_addr);
+    // inet_pton(AF_INET, "127.0.0.1", &server_addr.sin_addr);
 
     // Bind
     if (bind(sockfd, (struct sockaddr *)&server_addr, sizeof(server_addr)) < 0) {
@@ -41,20 +42,20 @@ int main() {
         ssize_t bytes_received = recvfrom(sockfd, buffer, BUFFER_SIZE - 1, 0,
                                           (struct sockaddr *)&client_addr, &client_len);
         if (bytes_received < 0) {
-            perror("recvfrom");
+            //perror("recvfrom");
             continue;
         }
 
         //Show Client IP and Port
         char client_ip[INET_ADDRSTRLEN];
         inet_ntop(AF_INET, &client_addr.sin_addr, client_ip, sizeof(client_ip));
-        printf("Received from client: IP = %s, Port = %d\n", client_ip, ntohs(client_addr.sin_port));
+        //printf("Received from client: IP = %s, Port = %d\n", client_ip, ntohs(client_addr.sin_port));
 
         buffer[bytes_received] = '\0';
-        printf("Message: %s\n", buffer);
+        //printf("Message: %s\n", buffer);
 
         char response[BUFFER_SIZE];
-        snprintf(response, BUFFER_SIZE, "Server received: %s", buffer);
+        //snprintf(response, BUFFER_SIZE, "Server received: %s", buffer);
 
         sendto(sockfd, response, strlen(response), 0,
                (struct sockaddr *)&client_addr, client_len);
